@@ -38,3 +38,8 @@ Route::patch('updateConcepto/{id}','ConceptosController@updateConcepto');
 // Dar de baja a un concepto
 Route::delete('deleteConcepto/{id}','ConceptosController@deleteConcepto'
 );
+
+/*******************************************
+ *         OBTENER NIVELES
+ * ****************************************/
+Route::get('niveles','NivelController@getNiveles');
