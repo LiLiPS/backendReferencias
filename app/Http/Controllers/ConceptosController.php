@@ -2,84 +2,133 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Concepto;
+use Symfony\Component\HttpFoundation\Response;
 
 class ConceptosController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
+     * Muestra todos los conceptos.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getConceptos()
     {
-        return Concepto::all();
+        //Busca conceptos no eliminados
+        $conceptos = Concepto::select('*')->orderBy('nombre')->get();
+
+        return response()->json(
+            $conceptos,
+            Response::HTTP_ACCEPTED
+        );
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Muestra un concepto especificado por su NOMBRE.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function getConcepto(Request $request)
     {
-        //
+        $concepto = null;
+
+        $objeto_db = Concepto::whereRaw("nombre LIKE '%$request->nombre%'");
+
+        $concepto = $objeto_db->select('*')->orderBy('nombre')->get();
+
+        return response()->json(
+            $concepto,
+            Response::HTTP_ACCEPTED
+        );
     }
 
     /**
-     * Display the specified resource.
+     * Crea un concepto
      *
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function createConcepto(Request $request)
     {
-        //
+        // Busca un concepto no eliminado con el mismo nombre
+        $existe = Concepto::where('nombre', '=', $request->nombre)->first();
+
+        // Si encuentra un concepto igual con nombre, retorna error.
+        if(!empty($existe)) {
+            return response()->json(
+                'El concepto con ese nombre ya existe.',
+                Response::HTTP_CONFLICT
+            );
+        }else{
+            $concepto = new Concepto;
+            $concepto->nombre = $request->nombre;
+            $concepto->descripcion = $request->descripcion;
+            $concepto->monto = $request->monto;
+            $concepto->estado = $request->estado;
+
+            $concepto->save();
+
+            return response()->json(
+                [$concepto],
+                Response::HTTP_CREATED
+            );
+        }
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Actualiza uno o varios atributos de un concepto
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function updateConcepto(Request $request, $id)
     {
-        //
+        // Busca el concepto que se quiere actualizar
+        $concepto = Concepto::where('concepto_id', '=', $id)->first();
+
+        // Si se quiere actualizar el nombre
+        if (isset($request->nombre)) {
+            // Busca un concepto (DIFERENTE AL QUE SE QUIERE ACTUALIZAR) no eliminado con el mismo nombre
+            $existe = Concepto::where('nombre', '=', $request->nombre)->where('concepto_id', '!=', $id)->first();
+
+            // Si existe un concepto con el mismo nombre
+            if (!empty($existe)) {
+                return response()->json(
+                    'El concepto con ese nombre ya existe.',
+                    Response::HTTP_CONFLICT
+                );
+            }else{
+                $concepto->update($request->all());
+
+                return response()->json(
+                    [$concepto],
+                    Response::HTTP_ACCEPTED
+                );
+            }
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un concepto
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function deleteConcepto($id)
     {
-        //
+        //Busca concepto con el id enviado
+        $concepto = Concepto::find($id);
+        $concepto->delete();
+
+        return response()->json(
+            'El concepto fue borrado.',
+            Response::HTTP_ACCEPTED
+        );
     }
+
 }
