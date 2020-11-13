@@ -42,4 +42,4 @@ Route::delete('deleteConcepto/{id}','ConceptosController@deleteConcepto'
 /*******************************************
  *         OBTENER NIVELES
  * ****************************************/
-Route::get('niveles','NivelController@getNiveles');
+Route::get('getNiveles','NivelController@getNiveles');
