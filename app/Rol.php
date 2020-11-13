@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Rol extends Model
 {
-    protected $filable = [
+    protected $fillable = [
         'nombre',
         'abreviatura',
         'estado'

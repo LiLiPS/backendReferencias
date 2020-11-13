@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Usuario extends Model
 {
-    protected $filable = [
+    protected $fillable = [
         'nivel_id',
         'nombre',
         'primer_apellido',

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Referencia extends Model
 {
-    protected $filable = [
+    protected $fillable = [
         'usuario_id',
         'concepto_id',
         'fecha_generada',

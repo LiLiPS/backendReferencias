@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Concepto extends Model
 {
-    protected $filable = [
-        'nombre',
-        'descripcion',
-        'monto',
-        'estado'
+    protected $fillable = [
+        "nombre",
+        "descripcion",
+        "monto",
+        "estado"
     ];
 
     protected $table = "concepto";

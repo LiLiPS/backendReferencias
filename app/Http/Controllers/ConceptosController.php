@@ -18,7 +18,7 @@ class ConceptosController extends Controller
     public function getConceptos()
     {
         //Busca conceptos no eliminados
-        $conceptos = Concepto::select('*')->orderBy('nombre')->get();
+        $conceptos = Concepto::orderBy('nombre')->get();
 
         return response()->json(
             $conceptos,
@@ -38,7 +38,7 @@ class ConceptosController extends Controller
 
         $objeto_db = Concepto::whereRaw("nombre LIKE '%$request->nombre%'");
 
-        $concepto = $objeto_db->select('*')->orderBy('nombre')->get();
+        $concepto = $objeto_db->orderBy('nombre')->get();
 
         return response()->json(
             $concepto,
@@ -64,16 +64,18 @@ class ConceptosController extends Controller
                 Response::HTTP_CONFLICT
             );
         }else{
+
             $concepto = new Concepto;
+            $estado = (int) $request->estado;
             $concepto->nombre = $request->nombre;
             $concepto->descripcion = $request->descripcion;
             $concepto->monto = $request->monto;
-            $concepto->estado = $request->estado;
+            $concepto->estado = $estado;
 
             $concepto->save();
 
             return response()->json(
-                [$concepto],
+                $concepto,
                 Response::HTTP_CREATED
             );
         }
@@ -106,7 +108,7 @@ class ConceptosController extends Controller
                 $concepto->update($request->all());
 
                 return response()->json(
-                    [$concepto],
+                    $concepto,
                     Response::HTTP_ACCEPTED
                 );
             }

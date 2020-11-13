@@ -22,10 +22,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //Route::resource("concepto", "ConceptosController");
 
 // Buscar todos los conceptos
-Route::get('conceptos','ConceptosController@getConceptos');
+Route::get('getConceptos','ConceptosController@getConceptos');
 
 // Buscar un concepto especificado por su FK área académica o nombre de concepto
-Route::post('conceptos','ConceptosController@getConcepto');
+Route::post('getConcepto','ConceptosController@getConcepto');
 
 // Crear un concepto
 Route::post(
@@ -33,7 +33,7 @@ Route::post(
 );
 
 // Actualizar un concepto
-Route::patch('updateConcepto/{id}','ConceptosController@updateConcepto');
+Route::put('updateConcepto/{id}','ConceptosController@updateConcepto');
 
 // Dar de baja a un concepto
 Route::delete('deleteConcepto/{id}','ConceptosController@deleteConcepto'

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ConceptoNivel extends Model
 {
-    protected $filable = [
+    protected $fillable = [
         'concepto_id',
         'nivel_id',
         'vigencia_inicial',
