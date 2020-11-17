@@ -105,7 +105,13 @@ class ConceptosController extends Controller
                     Response::HTTP_CONFLICT
                 );
             }else{
-                $concepto->update($request->all());
+                $estado = (int) $request->estado;
+                $concepto->nombre = $request->nombre;
+                $concepto->descripcion = $request->descripcion;
+                $concepto->monto = $request->monto;
+                $concepto->estado = $estado;
+
+                $concepto->save();
 
                 return response()->json(
                     $concepto,
