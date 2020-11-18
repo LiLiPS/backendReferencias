@@ -19,9 +19,42 @@ class AplicacionController extends Controller
         $objeto_db = ConceptoNivel::select('concepto_nivel.*','concepto.nombre AS nombre_concepto','nivel.nombre AS nombre_nivel')
             ->join('concepto','concepto_nivel.concepto_id', '=', 'concepto.concepto_id')
             ->join('nivel','concepto_nivel.nivel_id', '=', 'nivel.nivel_id')
-            ->get();
+            ->orderBy('concepto_nivel_id')->get();
 
-        return $objeto_db;
+        return response()->json(
+            $objeto_db,
+            Response::HTTP_ACCEPTED
+        );
+    }
+
+     /**
+     * Muestra las relaciones especificada por nombre del concepto o nombre de nivel .
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getAplicacion(Request $request)
+    {
+        $relacion = null;
+
+        $objeto_db = ConceptoNivel::select('concepto_nivel.*','concepto.nombre AS nombre_concepto','nivel.nombre AS nombre_nivel')
+            ->join('concepto','concepto_nivel.concepto_id', '=', 'concepto.concepto_id')
+            ->join('nivel','concepto_nivel.nivel_id', '=', 'nivel.nivel_id');
+
+        if(isset($request->nombre_concepto) && $request->nombre_concepto  != '') {
+            $objeto_db->whereRaw("concepto.nombre LIKE '%$request->nombre_concepto%'");
+        }
+
+        if (isset($request->nombre_nivel) && $request->nombre_nivel != '') {
+            $objeto_db->whereRaw("nivel.nombre LIKE '%$request->nombre_nivel%'");
+        }
+
+        $relacion = $objeto_db->orderBy('concepto_nivel_id')->get();
+
+        return response()->json(
+            $relacion,
+            Response::HTTP_ACCEPTED
+        );
     }
 
 
@@ -57,6 +90,10 @@ class AplicacionController extends Controller
 
             if($request->semestre){
                 $relacion->semestre = $request->semestre;
+            }
+
+            if($request->estatus){
+                $relacion->estatus = (int) $request->estatus;
             }
 
             $relacion->vigencia_inicial = $request->vigencia_inicial;
@@ -115,6 +152,10 @@ class AplicacionController extends Controller
                 $relacion->semestre = $request->semestre;
             }
 
+            if($request->estatus){
+                $relacion->estatus = (int) $request->estatus;
+            }
+
             $relacion->vigencia_inicial = $request->vigencia_inicial;
             $relacion->vigencia_final = $request->vigencia_final;
 
@@ -131,7 +172,22 @@ class AplicacionController extends Controller
             );
 
         }
+    }
 
+     /**
+     * Elimina una relación concepto - nivel/semestre
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteAplicacion($id)
+    {
+        $relacion = ConceptoNivel::find($id);
+        $relacion->delete();
 
+        return response()->json(
+            'La relación entre el concepto, nivel fue borrada.',
+            Response::HTTP_ACCEPTED
+        );
     }
 }

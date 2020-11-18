@@ -45,6 +45,12 @@ Route::get('getNiveles','NivelController@getNiveles');
 //Obtener todas las relaciones concepto - nivel
 Route::get('getAplicaciones','AplicacionController@getAplicaciones');
 
+// Obtener relaciones por nombre de concepto o nombre de nivel
+Route::post(
+    'getAplicacion',
+    'AplicacionController@getAplicacion'
+);
+
 // Crear una relación concepto - nivel
 Route::post(
     'createAplicacion',
@@ -55,4 +61,10 @@ Route::post(
 Route::put(
     'updateAplicacion/{id}',
     'AplicacionController@updateAplicacion'
+);
+
+//Elimina una relación concepto - nivel
+Route::delete(
+    'deleteAplicacion/{id}',
+    'AplicacionController@deleteAplicacion'
 );
