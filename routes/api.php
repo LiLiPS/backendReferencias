@@ -39,7 +39,20 @@ Route::put('updateConcepto/{id}','ConceptosController@updateConcepto');
 Route::delete('deleteConcepto/{id}','ConceptosController@deleteConcepto'
 );
 
-/*******************************************
- *         OBTENER NIVELES
- * ****************************************/
+//Obtener niveles
 Route::get('getNiveles','NivelController@getNiveles');
+
+//Obtener todas las relaciones concepto - nivel
+Route::get('getAplicaciones','AplicacionController@getAplicaciones');
+
+// Crear una relación concepto - nivel
+Route::post(
+    'createAplicacion',
+    'AplicacionController@createAplicacion'
+);
+
+// Actualizar una relación concepto - nivel
+Route::put(
+    'updateAplicacion/{id}',
+    'AplicacionController@updateAplicacion'
+);
