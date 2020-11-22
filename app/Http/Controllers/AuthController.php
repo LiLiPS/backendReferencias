@@ -56,7 +56,7 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (! $token = JWTAuth::attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Sin autorización.'], 401);
         }
 
         return $this->createNewToken($token);
@@ -72,7 +72,7 @@ class AuthController extends Controller
         JWTAuth::invalidate();
 
         return response()->json([
-            'message' => 'Successfully logged out'
+            'message' => 'Se cerró la sesión con éxito.'
         ], 200);
     }
 
