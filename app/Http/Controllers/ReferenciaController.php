@@ -8,6 +8,7 @@ use App\Referencia;
 use App\Usuario;
 use App\ConceptoNivel;
 use App\RolUsuario;
+use App\ConfSistema;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReferenciaController extends Controller
@@ -17,6 +18,29 @@ class ReferenciaController extends Controller
     public $conceptoTercero;
     public $conceptoQuinto;
     public $conceptoSeptimo;
+
+    /**
+     * Ver si es periodo de reinscripciones.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function esPeriodo()
+    {
+        $estado = null;
+
+        $conf = ConfSistema::where('abreviatura', '=', 'MOD_REINS')->first();
+
+        if ($conf->estado == 1) {
+            $estado = true;
+        } else {
+            $estado = false;
+        }
+
+        return response()->json(
+            $estado,
+            Response::HTTP_ACCEPTED
+        );
+    }
 
     /**
      * Crea una referencia de reinscripción.

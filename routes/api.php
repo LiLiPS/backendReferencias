@@ -71,3 +71,9 @@ Route::delete(
     'deleteAplicacion/{id}',
     'AplicacionController@deleteAplicacion'
 );
+
+// Checar si el periodo de reinscripciones es vigente.
+Route::get(
+    'esPeriodo',
+    'ReferenciaController@esPeriodo'
+);
