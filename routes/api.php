@@ -45,6 +45,9 @@ Route::get('getNiveles','NivelController@getNiveles');
 //Obtener todas las relaciones concepto - nivel
 Route::get('getAplicaciones','AplicacionController@getAplicaciones');
 
+//Obtener aplicación por id
+Route::get('cargarAplicacion/{id}','AplicacionController@cargarAplicacion');
+
 // Obtener relaciones por nombre de concepto o nombre de nivel
 Route::post(
     'getAplicacion',

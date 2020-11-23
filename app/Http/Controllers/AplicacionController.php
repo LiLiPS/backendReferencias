@@ -93,7 +93,7 @@ class AplicacionController extends Controller
             }
 
             if($request->estatus){
-                $relacion->estatus = (int) $request->estatus;
+                $relacion->estado = (int) $request->estatus;
             }
 
             $relacion->vigencia_inicial = $request->vigencia_inicial;
@@ -112,7 +112,22 @@ class AplicacionController extends Controller
             );
 
         }
+    }
 
+    /**
+     * Muestra todas las relaciones entre un
+     * concepto y un nivel o grupo.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function cargarAplicacion($id)
+    {
+        $objeto_db = ConceptoNivel::find($id);
+
+        return response()->json(
+            $objeto_db,
+            Response::HTTP_ACCEPTED
+        );
     }
 
     /**
@@ -152,9 +167,7 @@ class AplicacionController extends Controller
                 $relacion->semestre = $request->semestre;
             }
 
-            if($request->estatus){
-                $relacion->estatus = (int) $request->estatus;
-            }
+            $relacion->estado = (int) $request->estatus;
 
             $relacion->vigencia_inicial = $request->vigencia_inicial;
             $relacion->vigencia_final = $request->vigencia_final;
