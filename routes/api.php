@@ -18,62 +18,59 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::get("listarConceptos", "ConceptosController@index");
-//Route::resource("concepto", "ConceptosController");
+Route::group(['middleware' => 'api'], function() {
+    /**************************************************************************************
+     *                                  RUTAS GENERALES
+     *************************************************************************************/
+    // AUTENTICACIÓN
+     Route::post('login', 'AuthController@login');
+    Route::post('registro', 'AuthController@registro');
 
-// Buscar todos los conceptos
-Route::get('getConceptos','ConceptosController@getConceptos');
+    // NIVELES
+    Route::get('getNiveles','NivelController@getNiveles');
 
-// Buscar un concepto especificado por su FK área académica o nombre de concepto
-Route::post('getConcepto','ConceptosController@getConcepto');
+    /**************************************************************************************
+     *                                  RUTAS PROTEGIDAS
+     *************************************************************************************/
+    Route::middleware('auth.jwt')->group(function () {
+        // AUTENTICACIÓN
+        Route::post('logout', 'AuthController@logout');
+        Route::post('refresh', 'AuthController@refresh');
+        Route::get('me', 'AuthController@me');
 
-// Crear un concepto
-Route::post(
-    'createConcepto','ConceptosController@createConcepto'
-);
+        // REFERENCIAS
+        Route::get('esPeriodo','ReferenciaController@esPeriodo');
 
-// Actualizar un concepto
-Route::put('updateConcepto/{id}','ConceptosController@updateConcepto');
+        /**************************************************************
+         *                      ADMINISTRADOR
+         *************************************************************/
+        Route::middleware('auth.role:1')->group(function () {
 
-// Dar de baja a un concepto
-Route::delete('deleteConcepto/{id}','ConceptosController@deleteConcepto'
-);
+            // CONCEPTOS
+            Route::get('getConceptos', 'ConceptosController@getConceptos');
+            Route::post('getConcepto','ConceptosController@getConcepto');
+            Route::post('createConcepto','ConceptosController@createConcepto');
+            Route::put('updateConcepto/{id}','ConceptosController@updateConcepto');
+            Route::delete('deleteConcepto/{id}','ConceptosController@deleteConcepto');
 
-//Obtener niveles
-Route::get('getNiveles','NivelController@getNiveles');
+            // RELACIONES CONCEPTO-NIVEL
+            Route::get('getAplicaciones','AplicacionController@getAplicaciones');
+            Route::post('getAplicacion','AplicacionController@getAplicacion');
+            Route::get('cargarAplicacion/{id}','AplicacionController@cargarAplicacion');
+            Route::post('createAplicacion','AplicacionController@createAplicacion');
+            Route::put('updateAplicacion/{id}','AplicacionController@updateAplicacion');
+            Route::delete('deleteAplicacion/{id}','AplicacionController@deleteAplicacion');
 
-//Obtener todas las relaciones concepto - nivel
-Route::get('getAplicaciones','AplicacionController@getAplicaciones');
+            // REFERENCIAS
 
-//Obtener aplicación por id
-Route::get('cargarAplicacion/{id}','AplicacionController@cargarAplicacion');
+        });
 
-// Obtener relaciones por nombre de concepto o nombre de nivel
-Route::post(
-    'getAplicacion',
-    'AplicacionController@getAplicacion'
-);
-
-// Crear una relación concepto - nivel
-Route::post(
-    'createAplicacion',
-    'AplicacionController@createAplicacion'
-);
-
-// Actualizar una relación concepto - nivel
-Route::put(
-    'updateAplicacion/{id}',
-    'AplicacionController@updateAplicacion'
-);
-
-//Elimina una relación concepto - nivel
-Route::delete(
-    'deleteAplicacion/{id}',
-    'AplicacionController@deleteAplicacion'
-);
-
-// Checar si el periodo de reinscripciones es vigente.
-Route::get(
-    'esPeriodo',
-    'ReferenciaController@esPeriodo'
-);
+        /**************************************************************
+         *                          ESTUDIANTE
+         *************************************************************/
+        Route::middleware('auth.role:2')->group(function () {
+            // REFERENCIA DE REINSCRIPCIÓN
+            
+        });
+    });
+});

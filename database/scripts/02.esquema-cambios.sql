@@ -1,3 +1,6 @@
+alter table usuario
+    drop column sexo;
+    
 /* CREAR TABLA PARA LA CONFIGURACIÓN DE LOS SISTEMAS O MÓDULOS */
 DROP TABLE IF EXISTS conf_sistema;
 CREATE TABLE conf_sistema
