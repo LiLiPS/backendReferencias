@@ -135,3 +135,21 @@ ALTER TABLE referencia
 ALTER TABLE referencia
     ADD CONSTRAINT fk_concepto_id_referencia FOREIGN KEY (concepto_id) REFERENCES concepto (concepto_id);
 /* FIN TABLA REFERENCIAS */
+
+/* ******************************************************* *
+ * ********** CREACIÓN DE TABLA DE CONFIGURACIÓN ********* *
+ * ******************************************************* */
+DROP TABLE IF EXISTS conf_sistema;
+CREATE TABLE conf_sistema
+(
+    conf_sistema_id INT             NOT NULL    AUTO_INCREMENT,
+
+    nombre          VARCHAR(100)    NOT NULL,
+    abreviatura     VARCHAR(10)     NOT NULL,
+    fecha_inicial   DATE            NULL        DEFAULT NULL,
+    fecha_final     DATE            NULL        DEFAULT NULL,
+    estado          BIT             NOT NULL,
+    
+    CONSTRAINT pk_conf_sistema PRIMARY KEY (conf_sistema_id ASC)
+);
+
