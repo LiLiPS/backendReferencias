@@ -32,7 +32,6 @@ class AuthController extends Controller
 
             'nombre' => $request->nombre,
             'apellido' => $request->apellido,
-            'sexo' => $request->sexo,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'numero_control' => $request->numero_control,
@@ -56,7 +55,7 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (! $token = JWTAuth::attempt($credentials)) {
-            return response()->json(['error' => 'Sin autorización.'], 401);
+            return response()->json(['error' => 'Las credenciales son incorrectas.'], 401);
         }
 
         return $this->createNewToken($token);

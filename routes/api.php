@@ -22,13 +22,18 @@ Route::group(['middleware' => 'api'], function() {
     /**************************************************************************************
      *                                  RUTAS GENERALES
      *************************************************************************************/
-    Route::post('login', 'AuthController@login');
+    // AUTENTICACIÓN
+     Route::post('login', 'AuthController@login');
     Route::post('registro', 'AuthController@registro');
+
+    // NIVELES
+    Route::get('getNiveles','NivelController@getNiveles');
 
     /**************************************************************************************
      *                                  RUTAS PROTEGIDAS
      *************************************************************************************/
     Route::middleware('auth.jwt')->group(function () {
+        // AUTENTICACIÓN
         Route::post('logout', 'AuthController@logout');
         Route::post('refresh', 'AuthController@refresh');
         Route::get('me', 'AuthController@me');
@@ -37,8 +42,6 @@ Route::group(['middleware' => 'api'], function() {
          *                      ADMINISTRADOR
          *************************************************************/
         Route::middleware('auth.role:1')->group(function () {
-            // NIVELES
-            Route::get('getNiveles','NivelController@getNiveles');
 
             // CONCEPTOS
             Route::get('getConceptos', 'ConceptosController@getConceptos');

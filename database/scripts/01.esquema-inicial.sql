@@ -46,7 +46,6 @@ CREATE TABLE usuario
 
     nombre              VARCHAR(255)    NOT NULL,
     apellido            VARCHAR(255)    NOT NULL,
-    sexo                BIT             NOT NULL,                   -- 0 -> FEMENINO, 1 -> MASCULINO
     email               VARCHAR(255)    NOT NULL,
     password            VARCHAR(255)    NOT NULL,
     numero_control      VARCHAR(9)      DEFAULT NULL,
