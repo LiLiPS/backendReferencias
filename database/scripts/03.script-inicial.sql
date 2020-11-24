@@ -111,3 +111,10 @@ VALUES ((SELECT concepto_id FROM concepto WHERE nombre = 'Matriculación 2o Ener
        ((SELECT concepto_id FROM concepto WHERE nombre = 'Matriculación en doctorado octavo semestre'),
         (SELECT nivel_id FROM nivel WHERE nombre = 'Doctorado'),
         '2020-11-01', '2021-11-01', 8);
+
+
+/* *************************************************** *
+ * ** INSERTS DE TABLA DE CONFIGURACÍON DEL SISTEMA ** *
+ * *************************************************** */
+INSERT INTO conf_sistema (nombre, abreviatura, estado)
+VALUES ('MÓDULO DE REINSCRIPCION', 'MOD_REINS', 1);
