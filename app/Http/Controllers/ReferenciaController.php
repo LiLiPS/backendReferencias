@@ -7,7 +7,6 @@ use App\Concepto;
 use App\Referencia;
 use App\Usuario;
 use App\ConceptoNivel;
-use App\RolUsuario;
 use App\ConfSistema;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -52,7 +51,6 @@ class ReferenciaController extends Controller
         $this->concepto = null;
         $vigencia = null;
         $usuario = Usuario::find($id_usuario);
-        $rol_usuario = RolUsuario::where('usuario_id', '=', $id_usuario)->first();
 
         $this->getConceptosReinscripcion();
 
@@ -75,15 +73,17 @@ class ReferenciaController extends Controller
                 $this->concepto = $this->conceptoSegundo;
                 $vigencia = $vigenciaSegundo;
                 break;
-            case 3 || 4:
+            case 3:
+            case 4:
                 $this->concepto = $this->conceptoTercero;
                 $vigencia = $vigenciaTercero;
                 break;
-            case 5 || 6:
+            case 5:
+            case 6:
                 $this->concepto = $this->conceptoQuinto;
                 $vigencia = $vigenciaQuinto;
                 break;
-            case 7 || 8 || 9 || 10 || 11 || 12 || 13 || 14 || 15 || 16:
+            case 7: case 8: case 9: case 10: case 11:case  12: case 13: case 14: case 15: case 16:
                 $this->concepto = $this->conceptoSeptimo;
                 $vigencia = $vigenciaSeptimo;
         }
@@ -92,7 +92,7 @@ class ReferenciaController extends Controller
 
         //Para generar el número de referencia
         $ref = $this->RUTINA8250POSICIONES([
-            'tipo_persona'=>$rol_usuario->rol_id,                             // tipo usuario
+            'tipo_persona'=>$usuario->nivel_id,                              // tipo usuario
             'control'=>$usuario->numero_control,                                // número de control
             // llave primaria de concepto, cat_concepto
             'servicio'=>str_pad($this->concepto->concepto_id, 3, '0', STR_PAD_LEFT),
@@ -134,26 +134,27 @@ class ReferenciaController extends Controller
 
         $this->getConceptosReinscripcion();
 
-        switch($usuario->SEMESTRE) {
+        switch($usuario->semestre) {
             case 2:
                 $this->concepto = $this->conceptoSegundo;
                 break;
-            case 3 || 4:
+            case 3: case 4:
                 $this->concepto = $this->conceptoTercero;
                 break;
-            case 5 || 6:
+            case 5: case 6:
                 $this->concepto = $this->conceptoQuinto;
                 break;
-            case 7 || 8 || 9 || 10 || 11 || 12 || 13 || 14 || 15 || 16:
+            case 7: case 8: case 9: case 10: case 11: case 12: case 13: case 14: case 15: case 16:
                 $this->concepto = $this->conceptoSeptimo;
+                break;
         }
 
         $referencia = Referencia::join('usuario', 'referencia.usuario_id', '=', 'usuario.usuario_id')
-            ->join('concepto', 'referencia.concepto', '=', 'concepto.concepto')
-            ->where('usuario_id', '=', $id_usuario)
-            ->where('concepto_id', '=', $this->concepto->concepto_id)
-            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.primer_apellido',
-                'usuario.segundo_apellido', 'concepto.nombre AS nombre_concepto')->first();
+            ->join('concepto', 'referencia.concepto_id', '=', 'concepto.concepto_id')
+            ->where('usuario.usuario_id', '=', $id_usuario)
+            ->where('concepto.concepto_id', '=', $this->concepto->concepto_id)
+            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido',
+            'concepto.nombre AS nombre_concepto')->first();
 
         if (empty($referencia)) {
             return response()->json(
@@ -174,16 +175,16 @@ class ReferenciaController extends Controller
      *
      */
     public function getConceptosReinscripcion() {
-        $this->conceptoSegundo = Concepto::where('concepto.nombre', '=', 'Matriculación 2o semestre Agosto Diciembre 2020')
+        $this->conceptoSegundo = Concepto::where('concepto.nombre', '=', 'Matriculación 2o Enero Junio 2021')
             ->select('concepto.*')->first();
 
-        $this->conceptoTercero = Concepto::where('concepto.nombre', '=', 'Matriculación 3o y 4o semestre Agosto Diciembre 2020')
+        $this->conceptoTercero = Concepto::where('concepto.nombre', '=', 'Matriculación 3o y 4o semestre Enero Junio 2021')
             ->select('concepto.*')->first();
 
-        $this->conceptoQuinto = Concepto::where('concepto.nombre', '=', 'Matriculación 5o y 6o semestre Agosto Diciembre 2020')
+        $this->conceptoQuinto = Concepto::where('concepto.nombre', '=', 'Matriculación 5o y 6o semestre Enero Junio 2021')
             ->select('concepto.*')->first();
 
-        $this->conceptoSeptimo = Concepto::where('concepto.nombre', '=', 'Matriculación de 7o semestre en adelante Agosto Diciembre 2020')
+        $this->conceptoSeptimo = Concepto::where('concepto.nombre', '=', 'Matriculación 7o semestre en adelante Enero Junio 2021')
             ->select('concepto.*')->first();
     }
 

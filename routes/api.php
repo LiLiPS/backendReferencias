@@ -70,7 +70,8 @@ Route::group(['middleware' => 'api'], function() {
          *************************************************************/
         Route::middleware('auth.role:2')->group(function () {
             // REFERENCIA DE REINSCRIPCIÓN
-            
+            Route::post('createRefReinscripcion/{id}','ReferenciaController@createRefReinscripcion');
+            Route::get('getRefReinscripcion/{id}','ReferenciaController@getRefReinscripcion');
         });
     });
 });
