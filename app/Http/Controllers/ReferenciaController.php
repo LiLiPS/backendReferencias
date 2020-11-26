@@ -115,10 +115,7 @@ class ReferenciaController extends Controller
 
         $referencia->save();
 
-        return response()->json(
-            $referencia,
-            Response::HTTP_ACCEPTED
-        );
+        return $referencia;
     }
 
     /**
@@ -157,16 +154,19 @@ class ReferenciaController extends Controller
             'concepto.nombre AS nombre_concepto')->first();
 
         if (empty($referencia)) {
-            return response()->json(
-                'No existe ninguna referencia con el ID enviado.',
-                Response::HTTP_BAD_REQUEST
-            );
-        } else {
-            return response()->json(
-                $referencia,
-                Response::HTTP_ACCEPTED
-            );
-        }
+            $this->createRefReinscripcion($id_usuario);
+
+            $referencia = Referencia::join('usuario', 'referencia.usuario_id', '=', 'usuario.usuario_id')
+            ->join('concepto', 'referencia.concepto_id', '=', 'concepto.concepto_id')
+            ->where('usuario.usuario_id', '=', $id_usuario)
+            ->where('concepto.concepto_id', '=', $this->concepto->concepto_id)
+            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido',
+            'concepto.nombre AS nombre_concepto')->first();
+        } 
+        return response()->json(
+            $referencia,
+            Response::HTTP_ACCEPTED
+        );
     }
 
     /**
