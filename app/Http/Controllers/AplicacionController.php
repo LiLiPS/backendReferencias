@@ -45,8 +45,8 @@ class AplicacionController extends Controller
             $objeto_db->whereRaw("concepto.nombre LIKE '%$request->nombre_concepto%'");
         }
 
-        if (isset($request->nombre_nivel) && $request->nombre_nivel != '') {
-            $objeto_db->whereRaw("nivel.nombre LIKE '%$request->nombre_nivel%'");
+        if (isset($request->nivel_id) && $request->nivel_id != '') {
+            $objeto_db->whereRaw("concepto_nivel.nivel_id = $request->nivel_id");
         }
 
         $relacion = $objeto_db->orderBy('concepto_nivel_id')->get();
@@ -167,7 +167,7 @@ class AplicacionController extends Controller
                 $relacion->semestre = $request->semestre;
             }
 
-            $relacion->estado = (int) $request->estatus;
+            $relacion->estado = (int) $request->estado;
 
             $relacion->vigencia_inicial = $request->vigencia_inicial;
             $relacion->vigencia_final = $request->vigencia_final;
