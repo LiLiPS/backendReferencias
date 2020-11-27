@@ -40,6 +40,34 @@ class ReferenciaController extends Controller
     }
 
     /**
+     * Muestra una referencia especificada por su PK.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getReferencia($id)
+    {
+        $referencia = DB::table('referencia')
+            ->join('usuario','referencia.usuario_id', '=', 'usuario.usuario_id')
+            ->join('concepto','referencia.concepto_id', '=', 'concepto.concepto_id')
+            ->where('referencia_id', '=', $id)
+            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'concepto.nombre AS nombre_concepto')
+            ->first();
+
+        if (empty($referencia)) {
+            return response()->json(
+                'No existe ninguna referencia con el ID enviado.',
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return response()->json(
+                $referencia,
+                Response::HTTP_ACCEPTED
+            );
+        }
+    }
+
+    /**
      * Ver si es periodo de reinscripciones.
      *
      * @return \Illuminate\Http\Response

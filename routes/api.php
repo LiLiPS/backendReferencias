@@ -63,6 +63,7 @@ Route::group(['middleware' => 'api'], function() {
 
             // REFERENCIAS
             Route::get('getReferencias','ReferenciaController@getReferencias');
+            Route::get('getReferencia/{id}','ReferenciaController@getReferencia');
 
         });
 
