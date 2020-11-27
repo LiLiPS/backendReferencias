@@ -67,6 +67,31 @@ class ReferenciaController extends Controller
         }
     }
 
+    public function updateReferencia(Request $request, $id)
+    {
+        // Busca la referencia que se quiere actualizar
+        $referencia = Referencia::where('referencia_id', '=', $id)->first();
+
+        $referencia->usuario_id = $request->usuario_id;;
+        $referencia->concepto_id = $request->concepto_id;
+        $referencia->fecha_generada = $request->fecha_generada;
+        $referencia->fecha_expiracion = $request->fecha_expiracion;
+        $referencia->numero_ref_banco = $request->numero_ref_banco;
+        $referencia->monto = $request->monto;
+        $referencia->cantidad_solicitada = $request->cantidad_solicitada;
+        $referencia->monto_pagado = $request->monto_pagado;
+        $referencia->fecha_pago = $request->fecha_pago;
+        $referencia->tipo_pago = $request->tipo_pago;
+        $referencia->estado = (int)$request->estado;
+        $referencia->save();
+
+        return response()->json(
+            $referencia,
+            Response::HTTP_ACCEPTED
+        );
+
+    }
+
     /**
      * Ver si es periodo de reinscripciones.
      *
