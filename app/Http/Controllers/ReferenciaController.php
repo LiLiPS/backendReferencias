@@ -67,6 +67,30 @@ class ReferenciaController extends Controller
         }
     }
 
+    /**
+     * Muestra las referencias especificado por su numero de control.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getReferenciaByNumeroControl(Request $request)
+    {
+        $referencia = null;
+
+        $objeto_db = DB::table('referencia')
+            ->join('usuario','referencia.usuario_id', '=', 'usuario.usuario_id')
+            ->join('concepto','referencia.concepto_id', '=', 'concepto.concepto_id')
+            ->whereRaw("usuario.numero_control LIKE '%$request->numero_control%'")
+            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'concepto.nombre AS nombre_concepto');
+
+        $referencia = $objeto_db->orderBy('referencia.referencia_id')->get();
+
+        return response()->json(
+            $referencia,
+            Response::HTTP_ACCEPTED
+        );
+    }
+
     public function updateReferencia(Request $request, $id)
     {
         // Busca la referencia que se quiere actualizar

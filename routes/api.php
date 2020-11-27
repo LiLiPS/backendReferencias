@@ -65,6 +65,7 @@ Route::group(['middleware' => 'api'], function() {
             Route::get('getReferencias','ReferenciaController@getReferencias');
             Route::get('getReferencia/{id}','ReferenciaController@getReferencia');
             Route::put('updateReferencia/{id}','ReferenciaController@updateReferencia');
+            Route::post('getReferenciaByNumeroControl','ReferenciaController@getReferenciaByNumeroControl');
 
         });
 
