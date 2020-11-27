@@ -8,6 +8,7 @@ use App\Referencia;
 use App\Usuario;
 use App\ConceptoNivel;
 use App\ConfSistema;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReferenciaController extends Controller
@@ -17,6 +18,26 @@ class ReferenciaController extends Controller
     public $conceptoTercero;
     public $conceptoQuinto;
     public $conceptoSeptimo;
+
+    /**
+     * Muestra todas las referencias.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getReferencias()
+    {
+        $referencias = DB::table('referencia')
+            ->join('usuario','referencia.usuario_id', '=', 'usuario.usuario_id')
+            ->join('concepto','referencia.concepto_id', '=', 'concepto.concepto_id')
+            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'concepto.nombre AS nombre_concepto')
+            ->orderBy('referencia_id')
+            ->get();
+
+        return response()->json(
+            $referencias,
+            Response::HTTP_ACCEPTED
+        );
+    }
 
     /**
      * Ver si es periodo de reinscripciones.
@@ -162,7 +183,7 @@ class ReferenciaController extends Controller
             ->where('concepto.concepto_id', '=', $this->concepto->concepto_id)
             ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido',
             'concepto.nombre AS nombre_concepto')->first();
-        } 
+        }
         return response()->json(
             $referencia,
             Response::HTTP_ACCEPTED

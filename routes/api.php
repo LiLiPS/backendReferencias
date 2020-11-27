@@ -62,6 +62,7 @@ Route::group(['middleware' => 'api'], function() {
             Route::delete('deleteAplicacion/{id}','AplicacionController@deleteAplicacion');
 
             // REFERENCIAS
+            Route::get('getReferencias','ReferenciaController@getReferencias');
 
         });
 
