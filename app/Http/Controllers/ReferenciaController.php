@@ -29,7 +29,7 @@ class ReferenciaController extends Controller
         $referencias = DB::table('referencia')
             ->join('usuario','referencia.usuario_id', '=', 'usuario.usuario_id')
             ->join('concepto','referencia.concepto_id', '=', 'concepto.concepto_id')
-            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'concepto.nombre AS nombre_concepto')
+            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'usuario.numero_control', 'concepto.nombre AS nombre_concepto')
             ->orderBy('referencia_id')
             ->get();
 
@@ -51,7 +51,7 @@ class ReferenciaController extends Controller
             ->join('usuario','referencia.usuario_id', '=', 'usuario.usuario_id')
             ->join('concepto','referencia.concepto_id', '=', 'concepto.concepto_id')
             ->where('referencia_id', '=', $id)
-            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'concepto.nombre AS nombre_concepto')
+            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'usuario.numero_control', 'concepto.nombre AS nombre_concepto')
             ->first();
 
         if (empty($referencia)) {
@@ -81,7 +81,7 @@ class ReferenciaController extends Controller
             ->join('usuario','referencia.usuario_id', '=', 'usuario.usuario_id')
             ->join('concepto','referencia.concepto_id', '=', 'concepto.concepto_id')
             ->whereRaw("usuario.numero_control LIKE '%$request->numero_control%'")
-            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'concepto.nombre AS nombre_concepto');
+            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'usuario.numero_control', 'concepto.nombre AS nombre_concepto');
 
         $referencia = $objeto_db->orderBy('referencia.referencia_id')->get();
 
@@ -209,7 +209,7 @@ class ReferenciaController extends Controller
         $referencia->numero_ref_banco = $ref;
         $referencia->monto = $this->concepto->monto;
         $referencia->cantidad_solicitada = 1;
-        $referencia->monto_pagado = $this->concepto->monto * 1;  // Monto * cantidad = monto total
+        //$referencia->monto_pagado = $this->concepto->monto * 1;  // Monto * cantidad = monto total
 
         $referencia->save();
 
