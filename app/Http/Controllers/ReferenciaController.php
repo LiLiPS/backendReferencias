@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Concepto;
 use App\Referencia;
 use App\Usuario;
+use App\Nivel;
 use App\ConceptoNivel;
 use App\ConfSistema;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,10 @@ class ReferenciaController extends Controller
     public $conceptoSegundo;
     public $conceptoTercero;
     public $conceptoQuinto;
-    public $conceptoSeptimo;
+    public $conceptoPrimero;
+    public $conceptoCuarto;
+    public $conceptoSexto;
+    public $conceptoOctavo;
 
     /**
      * Muestra todas las referencias.
@@ -29,7 +33,7 @@ class ReferenciaController extends Controller
         $referencias = DB::table('referencia')
             ->join('usuario','referencia.usuario_id', '=', 'usuario.usuario_id')
             ->join('concepto','referencia.concepto_id', '=', 'concepto.concepto_id')
-            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'usuario.numero_control', 'concepto.nombre AS nombre_concepto')
+            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'concepto.nombre AS nombre_concepto')
             ->orderBy('referencia_id')
             ->get();
 
@@ -51,7 +55,7 @@ class ReferenciaController extends Controller
             ->join('usuario','referencia.usuario_id', '=', 'usuario.usuario_id')
             ->join('concepto','referencia.concepto_id', '=', 'concepto.concepto_id')
             ->where('referencia_id', '=', $id)
-            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'usuario.numero_control', 'concepto.nombre AS nombre_concepto')
+            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'concepto.nombre AS nombre_concepto')
             ->first();
 
         if (empty($referencia)) {
@@ -81,7 +85,7 @@ class ReferenciaController extends Controller
             ->join('usuario','referencia.usuario_id', '=', 'usuario.usuario_id')
             ->join('concepto','referencia.concepto_id', '=', 'concepto.concepto_id')
             ->whereRaw("usuario.numero_control LIKE '%$request->numero_control%'")
-            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'usuario.numero_control', 'concepto.nombre AS nombre_concepto');
+            ->select('referencia.*', 'usuario.nombre AS nombre_usuario', 'usuario.apellido', 'concepto.nombre AS nombre_concepto');
 
         $referencia = $objeto_db->orderBy('referencia.referencia_id')->get();
 
@@ -149,8 +153,8 @@ class ReferenciaController extends Controller
         $this->concepto = null;
         $vigencia = null;
         $usuario = Usuario::find($id_usuario);
-
-        $this->getConceptosReinscripcion();
+        $nivel = Nivel::find($usuario->nivel_id);
+        $this->getConceptosReinscripcion($nivel->nombre);
 
         // Obtener vigencia de concepto en el nivel y semestre
         $vigenciaSegundo = ConceptoNivel::where('concepto_id', '=', $this->conceptoSegundo->concepto_id)
@@ -159,29 +163,77 @@ class ReferenciaController extends Controller
         $vigenciaTercero = ConceptoNivel::where('concepto_id', '=', $this->conceptoTercero->concepto_id)
             ->select('concepto_nivel.*')->first();
 
-        $vigenciaQuinto = ConceptoNivel::where('concepto_id', '=', $this->conceptoQuinto->concepto_id)
+        if($nivel->nombre == 'Licenciatura' || $nivel->nombre == 'Doctorado'){
+            $vigenciaSeptimo = ConceptoNivel::where('concepto_id', '=', $this->conceptoSeptimo->concepto_id)
+                ->select('concepto_nivel.*')->first();
+            $vigenciaQuinto = ConceptoNivel::where('concepto_id', '=', $this->conceptoQuinto->concepto_id)
             ->select('concepto_nivel.*')->first();
-
-        $vigenciaSeptimo = ConceptoNivel::where('concepto_id', '=', $this->conceptoSeptimo->concepto_id)
+        }
+        if($nivel->nombre == 'Maestría' || $nivel->nombre == 'Doctorado'){
+            $vigenciaPrimero = ConceptoNivel::where('concepto_id', '=', $this->conceptoPrimero->concepto_id)
             ->select('concepto_nivel.*')->first();
+            $vigenciaCuarto = ConceptoNivel::where('concepto_id', '=', $this->conceptoCuarto->concepto_id)
+            ->select('concepto_nivel.*')->first();
+        }
+        if($nivel->nombre == 'Doctorado'){
+            $vigenciaSexto = ConceptoNivel::where('concepto_id', '=', $this->conceptoSexto->concepto_id)
+            ->select('concepto_nivel.*')->first();
+            $vigenciaOctavo = ConceptoNivel::where('concepto_id', '=', $this->conceptoOctavo->concepto_id)
+            ->select('concepto_nivel.*')->first();
+        }
 
         // Acomodar concepto y vigencias por semestres
         switch($usuario->semestre) {
+            case 1:
+                if($nivel->nombre == 'Maestría' || $nivel->nombre == 'Doctorado'){
+                    $this->concepto = $this->conceptoPrimero;
+                    $vigencia = $vigenciaPrimero;
+                }
+                break;
             case 2:
                 $this->concepto = $this->conceptoSegundo;
                 $vigencia = $vigenciaSegundo;
                 break;
             case 3:
-            case 4:
                 $this->concepto = $this->conceptoTercero;
                 $vigencia = $vigenciaTercero;
                 break;
-            case 5:
-            case 6:
-                $this->concepto = $this->conceptoQuinto;
-                $vigencia = $vigenciaQuinto;
+            case 4:
+                if($nivel->nombre == 'Maestría' || $nivel->nombre == 'Doctorado'){
+                    $this->concepto = $this->conceptoCuarto;
+                    $vigencia = $vigenciaCuarto;
+                }else{
+                    $this->concepto = $this->conceptoTercero;
+                    $vigencia = $vigenciaTercero;
+                }
                 break;
-            case 7: case 8: case 9: case 10: case 11:case  12: case 13: case 14: case 15: case 16:
+            case 5:
+                    $this->concepto = $this->conceptoQuinto;
+                    $vigencia = $vigenciaQuinto;
+                break;
+            case 6:
+                if($nivel->nombre == 'Doctorado'){
+                    $this->concepto = $this->conceptoSexto;
+                    $vigencia = $vigenciaSexto;
+                }else{
+                    $this->concepto = $this->conceptoQuinto;
+                    $vigencia = $vigenciaQuinto;
+                }
+                break;
+            case 7:
+                $this->concepto = $this->conceptoSeptimo;
+                $vigencia = $vigenciaSeptimo;
+                break;
+            case 8:
+                if($nivel->nombre == 'Doctorado'){
+                    $this->concepto = $this->conceptoOctavo;
+                    $vigencia = $vigenciaOctavo;
+                }else{
+                    $this->concepto = $this->conceptoSeptimo;
+                    $vigencia = $vigenciaSeptimo;
+                }
+                break;
+            case 9: case 10: case 11:case  12: case 13: case 14: case 15: case 16:
                 $this->concepto = $this->conceptoSeptimo;
                 $vigencia = $vigenciaSeptimo;
         }
@@ -226,21 +278,50 @@ class ReferenciaController extends Controller
         $this->concepto = null;
         $usuario = Usuario::find($id_usuario);
 
-        $this->getConceptosReinscripcion();
+        $nivel = Nivel::find($usuario->nivel_id);
+        $this->getConceptosReinscripcion($nivel->nombre);
 
         switch($usuario->semestre) {
+            case 1:
+                if($nivel->nombre == 'Maestría'|| $nivel->nombre == 'Doctorado'){
+                    $this->concepto = $this->conceptoPrimero;
+                }
+                break;
             case 2:
-                $this->concepto = $this->conceptoSegundo;
+                    $this->concepto = $this->conceptoSegundo;
                 break;
-            case 3: case 4:
-                $this->concepto = $this->conceptoTercero;
+            case 3:
+                    $this->concepto = $this->conceptoTercero;
                 break;
-            case 5: case 6:
-                $this->concepto = $this->conceptoQuinto;
+            case 4:
+                if($nivel->nombre == 'Maestría' || $nivel->nombre == 'Doctorado'){
+                    $this->concepto = $this->conceptoCuarto;
+                }else{
+                    $this->concepto = $this->conceptoTercero;
+                }
                 break;
-            case 7: case 8: case 9: case 10: case 11: case 12: case 13: case 14: case 15: case 16:
+            case 5:
+                    $this->concepto = $this->conceptoQuinto;
+                break;
+            case 6:
+                if($nivel->nombre == 'Doctorado'){
+                    $this->concepto = $this->conceptoSexto;
+                }else{
+                    $this->concepto = $this->conceptoQuinto;
+                }
+                break;
+            case 7:
                 $this->concepto = $this->conceptoSeptimo;
                 break;
+            case 8:
+                if($nivel->nombre == 'Doctorado'){
+                    $this->concepto = $this->conceptoOctavo;
+                }else{
+                    $this->concepto = $this->conceptoSeptimo;
+                }
+                break;
+            case 9: case 10: case 11:case  12: case 13: case 14: case 15: case 16:
+                $this->concepto = $this->conceptoSeptimo;
         }
 
         $referencia = Referencia::join('usuario', 'referencia.usuario_id', '=', 'usuario.usuario_id')
@@ -271,21 +352,58 @@ class ReferenciaController extends Controller
      * cada semestre.
      *
      */
-    public function getConceptosReinscripcion() {
-        $this->conceptoSegundo = Concepto::where('concepto.nombre', '=', 'Matriculación 2o Enero Junio 2021')
+    public function getConceptosReinscripcion($nivel) {
+        if($nivel == 'Licenciatura'){
+            $this->conceptoSegundo = Concepto::where('concepto.nombre', '=', 'Matriculación 2o Enero Junio 2021')
+                ->select('concepto.*')->first();
+
+            $this->conceptoTercero = Concepto::where('concepto.nombre', '=', 'Matriculación 3o y 4o semestre Enero Junio 2021')
+                ->select('concepto.*')->first();
+
+            $this->conceptoQuinto = Concepto::where('concepto.nombre', '=', 'Matriculación 5o y 6o semestre Enero Junio 2021')
+                ->select('concepto.*')->first();
+
+            $this->conceptoSeptimo = Concepto::where('concepto.nombre', '=', 'Matriculación 7o semestre en adelante Enero Junio 2021')
+                ->select('concepto.*')->first();
+        }else if($nivel == 'Maestría'){
+            // TODO agregar conceptos de maestria por semestre
+            $this->conceptoPrimero = Concepto::where('concepto.nombre', '=', 'Matriculación en maestría primer semestre')
+                ->select('concepto.*')->first();
+
+            $this->conceptoSegundo = Concepto::where('concepto.nombre', '=', 'Matriculación en maestría segundo semestre')
+                ->select('concepto.*')->first();
+
+            $this->conceptoTercero = Concepto::where('concepto.nombre', '=', 'Matriculación en maestría tercer semestre')
+                ->select('concepto.*')->first();
+
+            $this->conceptoCuarto = Concepto::where('concepto.nombre', '=', 'Matriculación en maestría cuarto semestre')
+                ->select('concepto.*')->first();
+        }else if($nivel == 'Doctorado'){
+            // TODO agregar conceptos de doctorado por semestre
+            $this->conceptoPrimero = Concepto::where('concepto.nombre', '=', 'Matriculación en maestría primer semestre')
+                ->select('concepto.*')->first();
+
+            $this->conceptoSegundo = Concepto::where('concepto.nombre', '=', 'Matriculación en doctorado segundo semestre')
+                ->select('concepto.*')->first();
+
+            $this->conceptoTercero = Concepto::where('concepto.nombre', '=', 'Matriculación en doctorado tercer semestre')
+                ->select('concepto.*')->first();
+
+            $this->conceptoCuarto = Concepto::where('concepto.nombre', '=', 'Matriculación en doctorado cuarto semestre')
+                ->select('concepto.*')->first();
+
+            $this->conceptoQuinto = Concepto::where('concepto.nombre', '=', 'Matriculación en doctorado quinto semestre')
+                ->select('concepto.*')->first();
+
+            $this->conceptoSexto = Concepto::where('concepto.nombre', '=', 'Matriculación en doctorado sexto semestre')
+                ->select('concepto.*')->first();
+
+            $this->conceptoSeptimo = Concepto::where('concepto.nombre', '=', 'Matriculación en doctorado séptimo semestre')
             ->select('concepto.*')->first();
 
-        $this->conceptoTercero = Concepto::where('concepto.nombre', '=', 'Matriculación 3o y 4o semestre Enero Junio 2021')
+            $this->conceptoOctavo = Concepto::where('concepto.nombre', '=', 'Matriculación en doctorado octavo semestre')
             ->select('concepto.*')->first();
-
-        $this->conceptoQuinto = Concepto::where('concepto.nombre', '=', 'Matriculación 5o y 6o semestre Enero Junio 2021')
-            ->select('concepto.*')->first();
-
-        $this->conceptoSeptimo = Concepto::where('concepto.nombre', '=', 'Matriculación 7o semestre en adelante Enero Junio 2021')
-            ->select('concepto.*')->first();
-
-        // TODO agregar conceptos de maestria por semestre
-        // TODO agregar conceptos de doctorado por semestre
+        }
     }
 
      /**
