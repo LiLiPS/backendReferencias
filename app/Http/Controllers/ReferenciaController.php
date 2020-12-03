@@ -209,7 +209,6 @@ class ReferenciaController extends Controller
         $referencia->numero_ref_banco = $ref;
         $referencia->monto = $this->concepto->monto;
         $referencia->cantidad_solicitada = 1;
-        //$referencia->monto_pagado = $this->concepto->monto * 1;  // Monto * cantidad = monto total
 
         $referencia->save();
 
@@ -284,6 +283,9 @@ class ReferenciaController extends Controller
 
         $this->conceptoSeptimo = Concepto::where('concepto.nombre', '=', 'Matriculación 7o semestre en adelante Enero Junio 2021')
             ->select('concepto.*')->first();
+
+        // TODO agregar conceptos de maestria por semestre
+        // TODO agregar conceptos de doctorado por semestre
     }
 
      /**
