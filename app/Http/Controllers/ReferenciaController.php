@@ -208,34 +208,40 @@ class ReferenciaController extends Controller
                 }
                 break;
             case 5:
+                if($nivel->nombre == 'Licenciatura' || $nivel->nombre == 'Doctorado'){
                     $this->concepto = $this->conceptoQuinto;
                     $vigencia = $vigenciaQuinto;
+                }
                 break;
             case 6:
                 if($nivel->nombre == 'Doctorado'){
                     $this->concepto = $this->conceptoSexto;
                     $vigencia = $vigenciaSexto;
-                }else{
+                }else if($nivel->nombre == 'Licenciatura'){
                     $this->concepto = $this->conceptoQuinto;
                     $vigencia = $vigenciaQuinto;
                 }
                 break;
             case 7:
-                $this->concepto = $this->conceptoSeptimo;
-                $vigencia = $vigenciaSeptimo;
+                if($nivel->nombre == 'Licenciatura' || $nivel->nombre == 'Doctorado'){
+                    $this->concepto = $this->conceptoSeptimo;
+                    $vigencia = $vigenciaSeptimo;
+                }
                 break;
             case 8:
                 if($nivel->nombre == 'Doctorado'){
                     $this->concepto = $this->conceptoOctavo;
                     $vigencia = $vigenciaOctavo;
-                }else{
+                }else if($nivel->nombre == 'Licenciatura'){
                     $this->concepto = $this->conceptoSeptimo;
                     $vigencia = $vigenciaSeptimo;
                 }
                 break;
             case 9: case 10: case 11:case  12: case 13: case 14: case 15: case 16:
-                $this->concepto = $this->conceptoSeptimo;
-                $vigencia = $vigenciaSeptimo;
+                if($nivel->nombre == 'Licenciatura'){
+                    $this->concepto = $this->conceptoSeptimo;
+                    $vigencia = $vigenciaSeptimo;
+                }
         }
 
         $referencia = new Referencia;
@@ -301,27 +307,30 @@ class ReferenciaController extends Controller
                 }
                 break;
             case 5:
+                if($nivel->nombre == 'Licenciatura' || $nivel->nombre == 'Doctorado')
                     $this->concepto = $this->conceptoQuinto;
                 break;
             case 6:
                 if($nivel->nombre == 'Doctorado'){
                     $this->concepto = $this->conceptoSexto;
-                }else{
+                }else if($nivel->nombre == 'Licenciatura'){
                     $this->concepto = $this->conceptoQuinto;
                 }
                 break;
             case 7:
-                $this->concepto = $this->conceptoSeptimo;
+                if($nivel->nombre == 'Licenciatura' || $nivel->nombre == 'Doctorado')
+                    $this->concepto = $this->conceptoSeptimo;
                 break;
             case 8:
                 if($nivel->nombre == 'Doctorado'){
                     $this->concepto = $this->conceptoOctavo;
-                }else{
+                }else if($nivel->nombre == 'Licenciatura'){
                     $this->concepto = $this->conceptoSeptimo;
                 }
                 break;
             case 9: case 10: case 11:case  12: case 13: case 14: case 15: case 16:
-                $this->concepto = $this->conceptoSeptimo;
+                if($nivel->nombre == 'Licenciatura')
+                    $this->concepto = $this->conceptoSeptimo;
         }
 
         $referencia = Referencia::join('usuario', 'referencia.usuario_id', '=', 'usuario.usuario_id')
